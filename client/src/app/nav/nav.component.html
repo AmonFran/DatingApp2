@@ -19,11 +19,10 @@
         </ul>
 
         <div class="dropdown" *ngIf="(this.accountService.currentUser$|async) as user">
-            {{imprimir(user)}}
             <img src="{{user.photoUrl || '../../assets/user.png'}}" alt="user photo">
-            <a class="dropdown-toggle text-light text-decoration-none ms-2" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Welcome {{user.username | titlecase}}
+            <a class="dropdown-toggle text-light text-decoration-none ms-2" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Welcome {{user.knownAs| titlecase}}
             </a>
             <ul class="dropdown-menu mt-3">
                 <li><a class="dropdown-item" routerLink="/member/edit">Edit Profile</a></li>

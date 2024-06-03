@@ -23,13 +23,10 @@ export class NavComponent implements OnInit {
       }
     });
   }
+  
   logOut() {
     this.accountService.logOut();
     this.router.navigateByUrl('/')
     this.model = {};
-  }
-  imprimir(a: any) {
-    console.log(a);
-    
   }
 }
