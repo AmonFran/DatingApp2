@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class MessageRepository : IMesssageRepository
+    public class MessageRepository : IMessageRepository
     {
         public readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -53,9 +53,7 @@ namespace API.Data
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUserName, string recipientUserName)
         {
-            var messages = await _context.Messages
-                .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+            var query = _context.Messages
                 .Where(
                     m => m.RecipientUsername == currentUserName &&
                     m.RecipientDeleted == false &&
@@ -65,9 +63,9 @@ namespace API.Data
                     m.SendUsername == currentUserName
                 )
                 .OrderBy(m => m.MessageSent)
-                .ToListAsync();
+                .AsQueryable();
 
-            var unreadMessages = messages.Where(m => m.DateRead == null && m.RecipientUsername == currentUserName).ToList();
+            var unreadMessages = query.Where(m => m.DateRead == null && m.RecipientUsername == currentUserName).ToList();
 
             if (unreadMessages.Any())
             {
@@ -75,14 +73,8 @@ namespace API.Data
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
-                await _context.SaveChangesAsync();
             }
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
+            return await query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public void AddGroup(Group group)
