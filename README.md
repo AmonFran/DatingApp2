@@ -1,2 +1,2 @@
 # DatingApp
-Aplicación creada durante el curso de ASPN .net
+Aplicación creada durante un curso de ASPN .net de Udemy
